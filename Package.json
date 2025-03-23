@@ -1,0 +1,8 @@
+{
+  "name": "carrd-ai-backend",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "openai": "^4.20.0"
+  }
+}
