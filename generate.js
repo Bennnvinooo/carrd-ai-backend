@@ -6,7 +6,11 @@ export default async function handler(req, res) {
       return res.status(405).json({ message: "Only POST requests allowed" });
     }
 
-    const { platform, topic } = req.body;
+    const body = req.body;
+
+    // Handle cases where body isn't parsed (Vercel bug sometimes)
+    let platform = body?.platform;
+    let topic = body?.topic;
 
     if (!platform || !topic) {
       return res.status(400).json({ message: "Missing platform or topic" });
@@ -23,7 +27,7 @@ export default async function handler(req, res) {
       messages: [
         {
           role: "user",
-          content: `Write a viral post for ${platform} about ${topic}.`,
+          content: `Write a viral ${platform} post about: ${topic}`,
         },
       ],
     });
@@ -31,10 +35,7 @@ export default async function handler(req, res) {
     const result = response.data.choices[0].message.content;
     return res.status(200).json({ result });
   } catch (error) {
-    console.error("Serverless function error:", error);
-    return res.status(500).json({
-      message: "Serverless function crashed",
-      error: error.message,
-    });
+    console.error("AI Error:", error.message);
+    return res.status(500).json({ error: error.message });
   }
 }
